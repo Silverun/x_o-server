@@ -1,5 +1,6 @@
 /* abstract */ class SessionStore {
   findSession(id) {}
+  deleteSession(id) {}
   saveSession(id, session) {}
   findAllSessions() {}
 }
@@ -12,6 +13,10 @@ class InMemorySessionStore extends SessionStore {
 
   findSession(id) {
     return this.sessions.get(id);
+  }
+
+  deleteSession(id) {
+    return this.sessions.delete(id);
   }
 
   saveSession(id, session) {

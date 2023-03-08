@@ -57,19 +57,6 @@ io.on("connection", async (socket) => {
 
   socket.on("disconnect", async () => {
     console.log("disconnect ran");
-    const matchingSockets = await io.in(socket.userID).fetchSockets();
-    const isDisconnected = matchingSockets.size === 0;
-    if (isDisconnected) {
-      // notify other users
-      console.log("is disc ran");
-      socket.broadcast.emit("user_disconnected", socket.userID);
-      // update the connection status of the session
-      sessionStore.saveSession(socket.sessionID, {
-        userID: socket.userID,
-        username: socket.username,
-        connected: false,
-      });
-    }
   });
 
   socket.on("invite_player", (id) => {
@@ -80,8 +67,17 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("join_room", (fromId) => {
+    //join room of other player
     socket.join(fromId);
     socket.to(fromId).emit("game_accepted");
+  });
+
+  socket.on("turn_end", (squares, gameRoom) => {
+    socket.broadcast.to(gameRoom).emit("turn_start", squares);
+  });
+
+  socket.on("play_again_click", (gameRoom) => {
+    socket.broadcast.to(gameRoom).emit("play_again_trigger");
   });
 });
 
