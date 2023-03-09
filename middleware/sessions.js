@@ -5,7 +5,7 @@ const sessionStore = new InMemorySessionStore();
 
 const sessionManager = (socket, next) => {
   const sessionID = socket.handshake.auth.sessionID;
-  console.log("SessionID", sessionID);
+  // console.log("SessionID", sessionID);
   if (sessionID) {
     // find existing session
     const session = sessionStore.findSession(sessionID);
@@ -28,7 +28,6 @@ const sessionManager = (socket, next) => {
   socket.sessionID = uuidv4();
   socket.userID = uuidv4();
   socket.username = username;
-
   next();
 };
 

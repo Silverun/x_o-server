@@ -55,8 +55,20 @@ io.on("connection", async (socket) => {
     connected: true,
   });
 
-  socket.on("disconnect", async () => {
-    console.log("disconnect ran");
+  socket.on("disconnect", async (reason) => {
+    console.log("USER DISCONNECTED");
+    console.log("reason", reason);
+    // manual logout
+    // if (reason === "client namespace disconnect") {
+    //   console.log("user", socket.userID);
+    //   socket.broadcast.emit("user_disconnected", socket.userID);
+    //   sessionStore.deleteSession(socket.sessionID);
+    // }
+    sessionStore.saveSession(socket.sessionID, {
+      userID: socket.userID,
+      username: socket.username,
+      connected: false,
+    });
   });
 
   socket.on("invite_player", (id) => {
