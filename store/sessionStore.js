@@ -10,19 +10,15 @@ class InMemorySessionStore extends SessionStore {
     super();
     this.sessions = new Map();
   }
-
   findSession(id) {
     return this.sessions.get(id);
   }
-
   deleteSession(id) {
     return this.sessions.delete(id);
   }
-
   saveSession(id, session) {
     this.sessions.set(id, session);
   }
-
   findAllSessions() {
     return [...this.sessions.values()];
   }

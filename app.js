@@ -28,19 +28,17 @@ instrument(io, {
 io.use(sessionManager);
 
 io.on("connection", async (socket) => {
-  // persist session
   sessionStore.saveSession(socket.sessionID, {
     userID: socket.userID,
     username: socket.username,
     connected: true,
   });
 
-  // emit session details
   socket.emit("session", {
     sessionID: socket.sessionID,
     userID: socket.userID,
   });
-  // join the "userID" room on connection
+
   socket.join(socket.userID);
 
   const users = [];
@@ -51,8 +49,9 @@ io.on("connection", async (socket) => {
       connected: session.connected,
     });
   });
+
   socket.emit("users", users);
-  // notify existing users
+
   socket.broadcast.emit("user_connected", {
     userID: socket.userID,
     username: socket.username,
@@ -60,14 +59,6 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("disconnect", async (reason) => {
-    console.log("USER DISCONNECTED");
-    console.log("reason", reason);
-    // manual logout
-    // if (reason === "client namespace disconnect") {
-    //   console.log("user", socket.userID);
-    //   socket.broadcast.emit("user_disconnected", socket.userID);
-    //   sessionStore.deleteSession(socket.sessionID);
-    // }
     sessionStore.saveSession(socket.sessionID, {
       userID: socket.userID,
       username: socket.username,
@@ -83,7 +74,6 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("join_room", (fromId) => {
-    //join room of other player
     socket.join(fromId);
     socket.to(fromId).emit("game_accepted");
   });
